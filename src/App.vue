@@ -14,8 +14,26 @@ import { ref } from 'vue'
 const greeting = `Ты идёшь по мокрой аллее. Где-то рядом — шелест листвы и тяжёлые капли. Из темноты слышится голос... "Эй... ты в порядке?"`
 
 const userMessage = ref('')
-function sendMessage() {
-  alert(`Ты написал: ${userMessage.value}`)
+async function sendMessage() {
+  const message = userMessage.value.trim()
+  if (!message) return
+
+  try {
+    const res = await fetch('https://ai-chat-server-dod9.onrender.com/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ message })
+    })
+    const data = await res.json()
+    alert(`Навия отвечает: ${data.reply}`)
+  } catch (err) {
+    console.error(err)
+    alert("Ошибка при обращении к серверу")
+  }
+
   userMessage.value = ''
 }
+
 </script>
